@@ -110,11 +110,15 @@ class ApplicationPropertiesAndControllerTests {
     @Test
     void testSaveFruit() throws Exception {
         given(fruitService.save(any())).willReturn(sampleFruit);
+
         mockMvc.perform(post("/fruit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleFruit)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("Apple")));
+                // DÜZELTME: Yanıt artık 'data' objesinin altında
+                .andExpect(jsonPath("$.data.name", is("Apple")))
+                // DÜZELTME: Yeni eklenen 'message' alanını da kontrol et
+                .andExpect(jsonPath("$.message", is("Fruit saved successfully.")));
     }
 
     @Test

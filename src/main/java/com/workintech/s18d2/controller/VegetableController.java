@@ -1,5 +1,6 @@
 package com.workintech.s18d2.controller;
 
+import com.workintech.s18d2.dto.SuccessResponse;
 import com.workintech.s18d2.entity.Vegetable;
 import com.workintech.s18d2.services.VegetableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +46,14 @@ public class VegetableController {
     }
 
     // README: [POST]/workintech/vegetables
+    // README: [POST]/workintech/vegetables
     @PostMapping
-    public Vegetable save(@RequestBody Vegetable vegetable) {
-        return vegetableService.save(vegetable);
+// DÖNÜŞ TİPİ GÜNCELLENDİ (Vegetable -> SuccessResponse)
+    public SuccessResponse save(@RequestBody Vegetable vegetable) {
+        Vegetable savedVegetable = vegetableService.save(vegetable);
+
+        // GÖREV 4: Obje ve mesaj birlikte dönülüyor
+        return new SuccessResponse(savedVegetable, "Vegetable saved successfully.");
     }
 
     // README: [DELETE]/workintech/vegetables/{id}

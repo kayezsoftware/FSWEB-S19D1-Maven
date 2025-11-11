@@ -1,5 +1,6 @@
 package com.workintech.s18d2.controller;
 
+import com.workintech.s18d2.dto.SuccessResponse;
 import com.workintech.s18d2.entity.Fruit;
 import com.workintech.s18d2.services.FruitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// Test dosyasına göre RequestMapping "/fruit"
-// README: /workintech/fruits istiyor
+// README: /workintech/fruits
+// FruitController'ı baz alarak "/fruit" kullanıyorum
+
 @RestController
 @RequestMapping("/fruit")
 public class FruitController {
@@ -48,13 +50,13 @@ public class FruitController {
         return fruitService.searchByName(name);
     }
 
-    // README: [POST]/workintech/fruits
-    // Test: [POST] /fruit
     @PostMapping
-    public Fruit save(@RequestBody Fruit fruit) {
-        // README Görev 4: Başarılı mesajı dönmeli
-        // ANCAK Test direkt objeyi bekliyor
-        return fruitService.save(fruit);
+// DÖNÜŞ TİPİ GÜNCELLENDİ (Fruit -> SuccessResponse)
+    public SuccessResponse save(@RequestBody Fruit fruit) {
+        Fruit savedFruit = fruitService.save(fruit);
+
+        // GÖREV 4: Obje ve mesaj birlikte dönülüyor
+        return new SuccessResponse(savedFruit, "Fruit saved successfully.");
     }
 
     // README: [DELETE]/workintech/fruits/{id}
