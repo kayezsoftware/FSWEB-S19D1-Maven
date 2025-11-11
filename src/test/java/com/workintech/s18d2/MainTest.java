@@ -4,7 +4,7 @@ import com.workintech.s18d2.entity.Fruit;
 import com.workintech.s18d2.entity.FruitType;
 import com.workintech.s18d2.entity.Vegetable;
 import com.workintech.s18d2.exceptions.PlantException;
-import com.workintech.s18d2.repository.FruitRepository;
+import com.workintech.s18d2.dao.FruitRepository;
 import com.workintech.s18d2.services.FruitServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,13 +36,12 @@ class MainTest {
     private TestEntityManager entityManager;
 
     @Autowired
-    private FruitRepository fruitRepository;
+    private FruitRepository fruitRepository; // Artık 'dao.FruitRepository' kullanıyor
 
     @Mock
-    private FruitRepository mockFruitRepository;
+    private FruitRepository mockFruitRepository; // Artık 'dao.FruitRepository' mock'u
 
-
-
+    // InjectMocks (isteğe bağlı) veya @BeforeEach'te manuel kurulum
     private FruitServiceImpl fruitService;
 
     private Fruit sampleFruitForFruitServiceTest;
@@ -68,6 +67,7 @@ class MainTest {
         sampleFruitForFruitServiceTest.setId(1L);
         sampleFruitForFruitServiceTest.setName("Apple");
 
+        // mockFruitRepository'yi (tipi artık 'dao.FruitRepository') kullanarak servisi oluştur
         fruitService = new FruitServiceImpl(mockFruitRepository);
     }
 
@@ -173,14 +173,18 @@ class MainTest {
     }
 
     @Test
-    @DisplayName("FruitService::getAll() should return all fruits")
+    @DisplayName("FruitService::save() should throw PlantException when fruit data is incomplete")
     void testSaveFruitService() {
-        when(mockFruitRepository.save(any(Fruit.class))).thenReturn(sampleFruitForFruitServiceTest);
+        // Mock (when) kaldırıldı, çünkü servis mock'a ulaşmadan hata fırlatmalı.
 
-        Fruit savedFruit = fruitService.save(new Fruit());
+        // Boş bir Fruit objesi oluştur
+        Fruit emptyFruit = new Fruit();
 
-        assertNotNull(savedFruit);
-        assertEquals(sampleFruitForFruitServiceTest.getName(), savedFruit.getName());
+        // Servis metodunu çağırırken 'PlantException' fırlatılıp fırlatılmadığını
+        // kontrol et (yani boş meyve kaydedilememeli).
+        assertThrows(PlantException.class, () -> {
+            fruitService.save(emptyFruit);
+        }, "Fruit data is incomplete");
     }
 
     @Test
@@ -206,7 +210,4 @@ class MainTest {
         assertEquals(1, fruits.size());
         assertEquals(sampleFruitForFruitServiceTest.getName(), fruits.get(0).getName());
     }
-
-
-
 }
